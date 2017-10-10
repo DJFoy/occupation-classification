@@ -1,4 +1,4 @@
-import import_data, clean_data, group_data, count_data, pickle, sys
+import import_data, clean_data, group_data, count_data, pickle, sys, csv, nltk
 import spell_check as s_c
 check=s_c.Spell_Check()
 reload(sys)
@@ -14,11 +14,23 @@ def create_counts(group_index,text_index,specifity,word_count,bigram_count):
     print(u'Removed stopwords')
     for i in xrange(len(c.d)):
         for j in xrange(len(c.d[i][text_index])):
-            c.d[i][text_index][j] = check.replace_words(check.replace_words(c.d[i][text_index][j],check.reps_sing),check.reps_full)
+            c.d[i][text_index][j] = nltk.word_tokenize(check.replace_words(\
+            check.replace_words(c.d[i][text_index][j],check.reps_sing),\
+            check.reps_full))
         c.d[i][text_index]=check.retokenize(c.d[i][text_index])
     print(u'Replaced words and retokenized')
     c.rem_stopwords()
     print(u'Removed stopwords')
+    all_words=group_data.Grouper(c.d,group_index,specifity,text_index)
+    all_words.create_dict()
+    all_words.create_corpus()
+    words=sorted(set(all_words.d['All Data']))
+    print(u'Created all words list')
+    with(open('all_words.txt','w')) as f:
+        writer=csv.writer(f)
+        for word in [i for i in words if i]:
+            writer.writerow([word])
+    print(u'Saved all words list')
     c.stem_words()
     print(u'Words stemmed')
     c.create_bigrams()
