@@ -65,7 +65,7 @@ class Classifier(object):
         return query
 
 def test():
-    query_list=import_data.Importer('connect_occupations.txt','|')
+    query_list=import_data.Importer('occupations.txt','|')
     query=Classifier('word_count.pickle','bigram_count.pickle')
     query.create_output(query_list.imported,'test_v1.txt')
 
