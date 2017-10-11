@@ -1,4 +1,4 @@
-import csv,sys
+import csv,sys,os,urllib2
 #Import the CSV module to read text files
 class Importer(object):
     """
@@ -8,17 +8,22 @@ class Importer(object):
     file as a list
     """
     def __init__(self, imp_file, delim):
-        if type(imp_file)==str:
-            with open(imp_file) as f:
+        if os.path.isfile(imp_file):
+            with(open(imp_file)) as f:
             #Open file to import
                 reader=csv.reader(f, delimiter=delim)
                 #Reads in the file using the parameter
                 temp_list=list(reader)
                 self.imported=[x for x in temp_list if x]
                 #Returns the imported file as a list of each row
-        else:
+        elif type(imp_file)==file:
             reader=csv.reader(imp_file, delimiter=delim)
             #Reads in the file using the parameter
             temp_list=list(reader)
             self.imported=[x for x in temp_list if x]
             #Returns the imported file as a list of each row
+        else:
+            f=urllib2.urlopen(imp_file)
+            reader=csv.reader(f,delimiter=delim)
+            temp_list=list(reader)
+            self.imported=[x for x in temp_list if x]
