@@ -3,8 +3,12 @@ from nltk.corpus import stopwords
 import spell_check as s_c
 reload(sys)
 sys.setdefaultencoding('utf8')
+#Attempt to avoid encoding errors
 stop = stopwords.words('english') + list(string.punctuation) + ["'s"]
+#Creates a list of stopwords that we want to remove from the corpi
 check=s_c.Spell_Check()
+#Creates a spell check object outside of the Cleaner class to ensure the spell
+#check class is only created once.
 
 class Cleaner(object):
     """
@@ -28,6 +32,10 @@ class Cleaner(object):
             l[self.text_index]=nltk.word_tokenize(\
             re.sub(r'[^\x00-\x7F]+','',re.sub(r'[\/]+',' ',l[self.text_index])\
             .lower().replace('-',', ')))
+            #Issues with non-ASCII characters caused some later functions to
+            #fail so ensured they were removed. Similarly, slashes and dashes
+            #caused some words to be tokenised incorrectly so replaced with
+            #space characters to ensure they were picked up.
     def spell_check(self):
         '''
         Use the Enchant module to check the spelling of input words, and replace
@@ -40,7 +48,11 @@ class Cleaner(object):
                 nltk.word_tokenize(check.replace_words(check.replace_words(\
                 check.spell_check(self.d[i][self.text_index][j]),\
                 check.reps_sing),check.reps_full))
+                #Goes through each word in each occupation replacing words
+                #from a common replacements file
             self.d[i][self.text_index]=check.retokenize(self.d[i][self.text_index])
+            #Often a replacement will include a space character and needs to be
+            #converted into two separate tokens
     def create_bigrams(self):
         """
         This creates a bigram from the text field, that is any combination of
@@ -76,6 +88,12 @@ class Cleaner(object):
             l[self.text_index]=[token for token in l[self.text_index]\
             if token not in stop]
     def add_dummy_group(self):
+        '''
+        Adds a dummy group value for query data to mirror data structure of
+        SOC data.
+        This makes it easier to cleanse query occupations to the same standard
+        preventing duplication of code to cleanse SOC and query occupations.
+        '''
         if type(self.d)==str:
             self.d=[[0,self.d]]
         elif type(self.d)==list:
