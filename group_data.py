@@ -54,5 +54,8 @@ class Grouper(object):
         #Returns a dictionary containing each group as a key and all the data
         #from each group as a list of lists
     def create_corpus(self):
+        '''
+        Create a single list of terms, rather than a list of occupations.
+        '''
         for key in self.d:
             self.d[key]=sum(self.d[key],[])
