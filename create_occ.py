@@ -1,3 +1,7 @@
+'''
+Script to create the 4 Occupational Classification Tool objects with different levels of specificity.
+'''
+
 if __name__=='__main__':
     import pickle, occ_class_tool
     occ1=occ_class_tool.Occupation_Classification_Tool('word_count1.pickle','bigram_count1.pickle',specifity=1)
