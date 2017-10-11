@@ -1,11 +1,15 @@
-import import_data, clean_data, group_data, count_data, pickle, sys, csv, nltk
+import import_data, clean_data, group_data, count_data, pickle, sys, csv, nltk, os
 import spell_check as s_c
 check=s_c.Spell_Check()
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 def create_counts(group_index,text_index,specifity,word_count,bigram_count):
-    i=import_data.Importer('jobrecords.txt','#')
+    if os.path.isfile('jobrecords.txt'):
+        i=import_data.Importer('jobrecords.txt','#')
+    else:
+        i=import_data.Importer(\
+        'https://onsdigital.github.io/dp-classification-tools/standard-occupational-classification/data/jobrecords.txt','#')
     print(u'Imported SOC data')
     c=clean_data.Cleaner(i.imported,group_index,text_index)
     c.create_tokens()
@@ -21,16 +25,19 @@ def create_counts(group_index,text_index,specifity,word_count,bigram_count):
     print(u'Replaced words and retokenized')
     c.rem_stopwords()
     print(u'Removed stopwords')
-    all_words=group_data.Grouper(c.d,group_index,specifity,text_index)
-    all_words.create_dict()
-    all_words.create_corpus()
-    words=sorted(set(all_words.d['All Data']))
-    print(u'Created all words list')
-    with(open('all_words.txt','w')) as f:
-        writer=csv.writer(f)
-        for word in [i for i in words if i]:
-            writer.writerow([word])
-    print(u'Saved all words list')
+    if os.path.isfile('all_words.txt'):
+        print(u'All words list exists')
+    else:
+        all_words=group_data.Grouper(c.d,group_index,specifity,text_index)
+        all_words.create_dict()
+        all_words.create_corpus()
+        words=sorted(set(all_words.d['All Data']))
+        print(u'Created all words list')
+        with(open('all_words.txt','w')) as f:
+            writer=csv.writer(f)
+            for word in [i for i in words if i]:
+                writer.writerow([word])
+        print(u'Saved all words list')
     c.stem_words()
     print(u'Words stemmed')
     c.create_bigrams()
@@ -62,7 +69,7 @@ def create_counts(group_index,text_index,specifity,word_count,bigram_count):
     with open(word_count,'wb') as f:
         pickle.dump(count,f)
     print(u'Pickled word counts')
-    with open(bigram_count,u'wb') as f:
+    with open(bigram_count,'wb') as f:
         pickle.dump(bi_count,f)
     print(u'Pickle bigram counts')
 
