@@ -19,9 +19,3 @@ class Occupation_Classification_Tool(object):
             self.classifier_object.create_output(temp_list)
         else:
             raise TypeError
-
-if __name__=='__main__':
-    occ=Occupation_Classification_Tool('word_count.pickle','bigram_count.pickle')
-    occ.classify_query('data analyst')
-    occ.classify_query('test.txt')
-    occ.classify_query(['data analyst','not a data analyst'])
