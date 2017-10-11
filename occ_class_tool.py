@@ -1,6 +1,13 @@
 import import_data, classifier, os, create_counts
 
 class Occupation_Classification_Tool(object):
+    '''
+    Creates an object which can classify a query using the word and bigram
+    objects.
+
+    Use the classify_query method and pass a string, list or file path and the
+    object will write the results to the output.txt file.
+    '''
     def __init__(self, word_count, bigram_count,group_index=0,text_index=1,specifity=1):
         if os.path.isfile(word_count) and os.path.isfile(bigram_count):
             self.classifier_object=classifier.Classifier(word_count,bigram_count)
